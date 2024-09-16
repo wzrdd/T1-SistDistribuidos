@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package main;
+
+service DNSServer {
+  rpc GetDNSRecord (DNSRequest) returns (DNSResponse) {}
+}
+
+message DNSRequest {
+  string domain = 1;
+}
+
+message DNSResponse {
+  string ip = 1;
+}

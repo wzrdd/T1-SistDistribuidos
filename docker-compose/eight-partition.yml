@@ -1,0 +1,75 @@
+service:
+  redis-node-1:
+    image: bitnami/redis:latest
+    command: ["redis-server", "--port", "6380", "--cluster-enabled", "yes", "--cluster-node-timeout", "5000"]
+    ports:
+      - "6380:6380"
+
+  redis-node-2:
+    image: bitnami/redis:latest
+    command: ["redis-server", "--port", "6381", "--cluster-enabled", "yes", "--cluster-node-timeout", "5000"]
+    ports:
+      - "6381:6381"
+
+  redis-node-3:
+    image: bitnami/redis:latest
+    command: ["redis-server", "--port", "6382", "--cluster-enabled", "yes", "--cluster-node-timeout", "5000"]
+    ports:
+      - "6382:6382"
+
+  redis-node-4:
+    image: bitnami/redis:latest
+    command: ["redis-server", "--port", "6383", "--cluster-enabled", "yes", "--cluster-node-timeout", "5000"]
+    ports:
+      - "6383:6383"
+
+  redis-node-5:
+    image: bitnami/redis:latest
+    command: ["redis-server", "--port", "6384", "--cluster-enabled", "yes", "--cluster-node-timeout", "5000"]
+    ports:
+      - "6384:6384"
+
+  redis-node-6:
+    image: bitnami/redis:latest
+    command: ["redis-server", "--port", "6385", "--cluster-enabled", "yes", "--cluster-node-timeout", "5000"]
+    ports:
+      - "6385:6385"
+
+  redis-node-7:
+    image: bitnami/redis:latest
+    command: ["redis-server", "--port", "6386", "--cluster-enabled", "yes", "--cluster-node-timeout", "5000"]
+    ports:
+      - "6386:6386"
+
+  redis-node-8:
+    image: bitnami/redis:latest
+    command: ["redis-server", "--port", "6387", "--cluster-enabled", "yes", "--cluster-node-timeout", "5000"]
+    ports:
+      - "6387:6387"
+
+  redis-cluster-create:
+    image: bitnami/redis:latest
+    depends_on:
+      - redis-node-1
+      - redis-node-2
+      - redis-node-3
+      - redis-node-4
+      - redis-node-5
+      - redis-node-6
+      - redis-node-7
+      - redis-node-8
+    entrypoint: ["sh", "-c", "sleep 10 && redis-cli --cluster create 127.0.0.1:6380 127.0.0.1:6381 127.0.0.1:6382 127.0.0.1:6383 127.0.0.1:6384 127.0.0.1:6385 127.0.0.1:6386 127.0.0.1:6387 --cluster-replicas 0"]
+
+  dns-server:
+    build: ../.
+    command: "node ../servers/server-eight-partition-hash.js"
+    ports:
+      - "50051:50051"
+    depends_on:
+      - redis
+
+  dns-client:
+    build: ../.
+    command: "node client.js"
+    depends_on:
+      - dns-server

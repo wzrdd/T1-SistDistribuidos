@@ -1,0 +1,24 @@
+services:
+  redis:
+    image: 'bitnami/redis:latest'
+    environment:
+      - REDIS_PORT_NUMBER=7000
+      - ALLOW_EMPTY_PASSWORD=yes
+    ports:
+      - '7000:7000'
+
+  dns-server:
+    build: ../.
+    command: "node /app/servers/server-standalone.js"
+    volumes:
+      - ../metrics:/app/metrics
+    ports:
+      - "50051:50051"
+    depends_on:
+      - redis
+
+  dns-client:
+    build: ../.
+    command: "node client.js"
+    depends_on:
+      - dns-server
